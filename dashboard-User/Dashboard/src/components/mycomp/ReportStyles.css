@@ -1,0 +1,78 @@
+.main-container {
+  padding: 70px 70px 10px 70px; 
+  background: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 793.70079px;
+  box-shadow: 24;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.print-button {
+  padding: none;
+  background: none;
+  border: none;
+  margin-bottom: 50px;
+  cursor: pointer;
+}
+
+.print-button svg {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+svg {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: -10px;
+}
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 40px;
+  font-weight: lighter;
+}
+.content-header {
+  font-size: 20px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+.paragraph {
+  display: flex;
+  flex-wrap: wrap;
+  /* margin-bottom: 40px; */
+}
+.column {
+  width: 50%;
+  /* padding: 20px; */
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  /* margin-bottom: 40px; */
+}
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+.footer {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 180px;
+}
+
+.introduction {
+  padding: 20px;
+  text-align: center;
+}

@@ -49,16 +49,22 @@ export default function LoginForm() {
             localStorage.setItem('userName', response.data.user.name);
             localStorage.setItem('userPhone', response.data.user.phone);
             localStorage.setItem('userLocation', response.data.user.province+", "+response.data.user.district+", "+response.data.user.sector+", "+response.data.user.cell);
+            localStorage.setItem('userRole', response.data.user.role);
+            localStorage.setItem('id', response.data.user._id);
           } else if(response.data.user.role === 'Admin') {
             window.location = 'http://localhost:3003/dashboard/app';
             localStorage.setItem('adminToken', response.data.token);
             localStorage.setItem('adminEmail', response.data.user.email);
             localStorage.setItem('adminName', response.data.user.name);
+            localStorage.setItem('userRole', response.data.user.role);
+            localStorage.setItem('id', response.data.user._id);
           }else if(response.data.user.role === 'Supervisor'){
             window.location = 'http://localhost:3002/dashboard/app';
             localStorage.setItem('supervisorToken', response.data.token);
             localStorage.setItem('supervisorEmail', response.data.user.email);
             localStorage.setItem('supervisorName', response.data.user.name);
+            localStorage.setItem('userRole', response.data.user.role);
+            localStorage.setItem('id', response.data.user._id);
           }
         }
       })

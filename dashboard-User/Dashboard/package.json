@@ -38,12 +38,14 @@
     ]
   },
   "dependencies": {
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@faker-js/faker": "^7.6.0",
     "@iconify/react": "^4.0.0",
     "@mui/lab": "^5.0.0-alpha.103",
-    "@mui/material": "^5.10.9",
+    "@mui/material": "^5.11.5",
+    "@mui/styled-engine-sc": "^5.11.0",
+    "@mui/x-data-grid": "^5.17.19",
     "apexcharts": "^3.36.0",
     "change-case": "^4.1.2",
     "date-fns": "^2.29.3",
@@ -59,6 +61,7 @@
     "react-router-dom": "^6.4.2",
     "react-scripts": "^5.0.1",
     "simplebar-react": "^2.4.3",
+    "styled-components": "^5.3.6",
     "web-vitals": "^3.0.3"
   },
   "devDependencies": {
