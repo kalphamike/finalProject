@@ -19,12 +19,13 @@ export default function SignUpForm() {
     name: '',
     phone: '',
     email: '',  
-    role: 'Supervisor',
+    role: 'Agent',
     province: '',
     district: '',
     sector:'',
     cell: '',
-    password: ''
+    password: '',
+    status:'banned',
   });
 
   const [error, setError] = useState('');
@@ -119,7 +120,7 @@ export default function SignUpForm() {
             // value={signinData.province}
             onChange={updateData}
             sx={{padding:2}}
-            >
+          >
               <option value={''}>Select Province</option>
               <option value={'Kigali City'}>Kigali City</option>
               <option value={'Northern Province'}>Northern Province</option>
@@ -192,7 +193,7 @@ export default function SignUpForm() {
               }
           </NativeSelect>
 
-              {/* Cell */}
+          {/* Cell */}
           <NativeSelect 
             name='cell'
             onChange={updateData}
@@ -218,6 +219,7 @@ export default function SignUpForm() {
                 ''
               }
           </NativeSelect>
+
           <TextField
             name="password"
             value={signinData.password}
