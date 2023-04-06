@@ -18,7 +18,7 @@ import NewCase from './pages/NewCase';
 import Victims from './pages/Victims';
 import Suspect from './pages/Suspect';
 import Mumuryango from './pages/Mumuyango';
-import { LoginForm, SignupForm } from './sections/auth';
+import { LoginForm, ResetPasswordForm, SignupForm } from './sections/auth';
 
 // ----------------------------------------------------------------------
 
@@ -63,6 +63,7 @@ export default function App() {
           <Route path='' element={<LoginForm />} />
           <Route path='signin' element={<LoginForm />} />
           <Route path='signup' element={<SignupForm />} />
+          <Route path='resetPassword/:token/:userId' element={<ResetPasswordForm />} />
         </Route>
       </Routes>
     </ThemeProvider>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FcPrint } from 'react-icons/fc';
 import './ReportStyles.css';
 import jsPDF from 'jspdf';
+import { SectionCategory } from './CaseDetailsComponents';
 
 const ReportOne = ({reportData}) => {
     const print = () => {
@@ -13,6 +14,14 @@ const ReportOne = ({reportData}) => {
         });
     }
 
+    //Agent location display 
+    var SupervisorSector = localStorage.getItem('userLocation');
+    var words = SupervisorSector.split(',');
+    var cellOnly = words[3].trim();
+    var sectorOnly = words[2].trim();
+    var districtOnly = words[1].trim();
+    var provenceOnly = words[0].trim();
+
     return (
     <>
         <div className='main-container' id='report'>      
@@ -20,7 +29,8 @@ const ReportOne = ({reportData}) => {
                 <h1 className="header">Report of Protecting child <FcPrint onClick={print} /></h1>
                 <h6 className="subtitle">NCDA Rwanda | www.ncda.gov.rw | info.ncda.gov.rw</h6>
                 <h2 className="content-header">Report from Jali sector IZU </h2>
-                <p>{localStorage.getItem('userLocation')}, {new Date().toDateString()}</p>
+                <p>{provenceOnly},{districtOnly},{sectorOnly},{cellOnly} at {new Date().toDateString()}</p>
+                {/* <p>{localStorage.getItem('userLocation')}, {new Date().toDateString()}</p> */}
                 <div className="content-date"><p id="date"></p></div>
                 <div className="paragraph">
                     
@@ -63,18 +73,19 @@ const ReportOne = ({reportData}) => {
                 </table>
             </div>
             <div style={{display: 'flex' ,justifyContent: 'center'}}>
-                <div style={{flex: '1'}}>
+                {/* <div style={{flex: '1'}}>
                     <div className="column">
                         <p>Sector coordinator</p>
                         <p>Names: </p>
                         <p>Phone Number: </p>
                     </div>
-                </div>
+                </div> */}
                 <div style={{flex: '1'}}>
                     <div className="column">
-                        <p>District coordinator</p>
-                        <p>Names: </p>
-                        <p>Phone Number: </p>
+                    <SectionCategory>Village coordinator</SectionCategory>
+ 
+                        <p>Names: { localStorage.getItem('userName')} </p>
+                        <p>Phone Number: {localStorage.getItem('userPhone')}</p>
                     </div>
                 </div>
             </div>
