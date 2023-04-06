@@ -71,7 +71,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
           />
         </g>
       </svg> */}
-      <label >Child Right System</label>
+      <label >CRM</label>
     </Box>
   );
 
@@ -80,7 +80,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   }
 
   return (
-    <Link to="/" component={RouterLink} sx={{ display: 'contents' }}>
+    <Link to="/" component={RouterLink} sx={{ display: 'contents', color: 'white', fontSize: '30px', marginBottom: '50px', textAlign: 'center'}}>
       {logo}
     </Link>
   );

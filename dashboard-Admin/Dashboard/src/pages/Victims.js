@@ -1,4 +1,5 @@
 import React, { useState , useEffect} from 'react';
+
 import { GrView } from 'react-icons/gr';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -24,7 +25,9 @@ const style = {
   overflowY: 'scroll',
 };
 
-export default function CasesPage() {
+export default function Victims() {
+  
+  
   const navigate=useNavigate();
   const [cases, setCases] = useState([]);
   const [open, setOpen] = useState(false);
@@ -35,32 +38,35 @@ export default function CasesPage() {
   const [message, setMessage] = useState({ text:'', color:''});
   const [comment, setComment] = useState('');
 
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  
-  useEffect(()=>{
-    const filterValue = localStorage.getItem('filter');
 
+ 
+  useEffect(()=>{
     axios.get('http://localhost:5000/api/case/list')
     .then(response=> {
-      var filteredCases = [];
+      const filteredCases = [];
       response.data.forEach(element => {
-        element.id=element._id;
-        if (filterValue && element._id === filterValue) {
-          filteredCases.push(element);
-        } 
-        if (!filterValue) {
+        element.id=element._id
+       var caseLoc = element.locationOfCrime.split(", ");
+        var superLoc = localStorage.getItem('adminLocation').split(", ");
+
+        if ( caseLoc[0] === superLoc[0] && caseLoc[1] === superLoc[1] && caseLoc[2] === superLoc[2]){
           filteredCases.push(element);
         }
-
       });
       setCases(filteredCases);
     })
-    .catch(error => { console.log(error);})
+    .catch(error => {
+      console.log(error);
+    })
   },[]);
 
   const showCaseData = async (id) => {
     console.log("Case id: "+id);
+    
+
     await axios.get(`http://localhost:5000/api/case/findByID?id=${id}`)
     .then(response =>{
       setCaseDetails(response.data);
@@ -69,6 +75,7 @@ export default function CasesPage() {
     .catch(error => console.log(error))
   }
   
+   
   const handleComment = ({ currentTarget: input }) => {
     setComment(input.value);
   };
@@ -96,35 +103,45 @@ export default function CasesPage() {
     }
   }
 
-
-
+  
   const columns = [
-    { 
-      field: 'category', 
-      headerName: 'Icyiciro', 
-      width: 250 
-    },
     {
       field: 'nameOfVictime',
-      headerName: "Amazina y'umwana",
-      width: 250,
-      editable: true,
-    },
-    {
-      field: 'locationOfCrime',
-      headerName: 'Aho byabereye',
+      headerName: 'Amazina',
       width: 150,
       editable: true,
     },
     {
-      field: 'ReportDate',
-      headerName: 'Igihe bitangiwe',
-      width: 120,
+      field: 'ageOfVictime',
+      headerName: 'Imyaka ',
+      width: 75,
       editable: true,
     },
     {
-      field: 'DateOfCrime',
-      headerName: 'Igihe byabereye',
+      field: 'victimeGender',
+      headerName: ' Igitsina',
+      width: 100,
+      editable: true,
+    },
+    {
+      field: 'victimeResidence',
+      headerName: 'Aha atuye',
+      width: 150,
+      editable: true,
+    },
+    { 
+      field: 'firstguiderOfVictime', 
+      headerName: 'Umurera ', 
+      width: 150 
+    },
+    { 
+      field: 'firstguiderPhoneNumber', 
+      headerName: "Telefoni y'umurera", 
+      width: 150 
+    },
+    {
+      field: 'hasDisability',
+      headerName: "Ubumuga",
       width: 120,
       editable: true,
     },
@@ -140,38 +157,34 @@ export default function CasesPage() {
 
   const rows = cases
 
-  return (
+
+    return (
+      
+      
+
     <>
-      <Helmet><title> Lisite y'ibirego byatanzwe </title></Helmet>
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>Lisite y'ibirego byatanzwe</Typography>
-          <div>
-            {localStorage.getItem('filter') !== '' && 
-              <Button  variant="outlined" 
-                sx={{ marginRight: '10px', boxShadow: '0 4px 8px 0 #d1e9fc'}}
-                onClick={()=> {
-                  localStorage.setItem('filter', '');
-                  window.location.reload();
-                  }
-                }>Ibibazo Byose</Button>}
-            
-            <Button  variant="contained" onClick={()=> navigate('/dashboard/NewCase')}>Ikibazo Gishya</Button>
-          </div>
-        </Stack>
-      </Container> 
-      <Box sx={{ height: 800, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={10}
-          rowsPerPageOptions={[10]}
-          checkboxSelection 
-          disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
-        />
-      </Box>
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+    <Helmet><title> Abana  </title></Helmet>
+     <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+         <Typography variant="h4" gutterBottom>
+            Lisite y'abana 
+          </Typography>
+          <Button  variant="contained" onClick={()=> navigate('/dashboard/NewCase')}>Ikibazo Gishya</Button>          
+          </Stack>
+        </Container> 
+          <Box sx={{ height: 800, width: '100%' }}>
+          
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              pageSize={10}
+              rowsPerPageOptions={[10]}
+              checkboxSelection
+              disableSelectionOnClick
+              experimentalFeatures={{ newEditingApi: true }}
+            />
+          </Box>
+          <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
           <SectionCategory>Amakuru ku mwana</SectionCategory>
           <TwoSidedContainer>
@@ -295,174 +308,28 @@ export default function CasesPage() {
             </RightSide>
           </TwoSidedContainer>
           <hr />
-          <SectionCategory>Amakuru ku kibazo</SectionCategory>
-          <TwoSidedContainer>
-            <LeftSide>
-              <TwoSidedContainer>
-                <LeftSide>
-                  <strong>Ikibazo:</strong>
-                </LeftSide>
-                <RightSide>
-                  <p>{caseDetails.category}</p>
-                </RightSide>
-              </TwoSidedContainer>
-              {(caseDetails.category === 'Abana bugarijwe' || caseDetails.category === 'Kuva mwishuri') ? 
-              <></>
-              :
-              <>
-                <TwoSidedContainer>
-                  <LeftSide>
-                    <strong>Amazina y'ukekwa:</strong>
-                  </LeftSide>
-                  <RightSide>
-                    <p>{caseDetails.suspectName}</p>
-                  </RightSide>
-                </TwoSidedContainer>
-                <TwoSidedContainer>
-                  <LeftSide>
-                    <strong>Imyaka y'ukekwa:</strong>
-                  </LeftSide>
-                  <RightSide>
-                    <p>{caseDetails.suspectAge}</p>
-                  </RightSide>
-                </TwoSidedContainer>
-                <TwoSidedContainer>
-                  <LeftSide>
-                    <strong>Igitsina cy'ukekwa:</strong>
-                  </LeftSide>
-                  <RightSide>
-                    <p>{caseDetails.suspectGender}</p>
-                  </RightSide>
-                </TwoSidedContainer>
-                <TwoSidedContainer>
-                  <LeftSide>
-                    <strong>Numero y'ukekwa:</strong>
-                  </LeftSide>
-                  <RightSide>
-                    <p>{caseDetails.suspectPhoneNumber}</p>
-                  </RightSide>
-                </TwoSidedContainer>
-                <TwoSidedContainer>
-                  <LeftSide>
-                    <strong>Aho ukekwa atuye:</strong>
-                  </LeftSide>
-                  <RightSide>
-                    <p>{caseDetails.supectResidence}</p>
-                  </RightSide>
-                </TwoSidedContainer>
-              </>
-              }
-              <TwoSidedContainer>
-                <LeftSide>
-                  <strong>Igihe icyaha cyabereye:</strong>
-                </LeftSide>
-                <RightSide>
-                  <p>{caseDetails.DateOfCrime}</p>
-                </RightSide>
-              </TwoSidedContainer>
-              <TwoSidedContainer>
-                <LeftSide>
-                  <strong>Igihe cyatangiwe:</strong>
-                </LeftSide>
-                <RightSide>
-                  <p>{caseDetails.ReportDate}</p>
-                </RightSide>
-              </TwoSidedContainer>
-            </LeftSide>
-            <RightSide>
-              {(caseDetails.category === 'Abana bugarijwe' || caseDetails.category === 'Kuva mwishuri') ? 
-                <></>
-                :
-                <>
-                  <TwoSidedContainer>
-                    <LeftSide>
-                      <strong>Umutangabuhamya:</strong>
-                    </LeftSide>
-                    <RightSide>
-                      <p>{caseDetails.firstWitness}</p>
-                    </RightSide>
-                  </TwoSidedContainer>
-                  <TwoSidedContainer>
-                    <LeftSide>
-                      <strong>Numero y'umutangabuhamya:</strong>
-                    </LeftSide>
-                    <RightSide>
-                      <p>{caseDetails.FWPhoneNumber}</p>
-                    </RightSide>
-                  </TwoSidedContainer>
-                  <TwoSidedContainer>
-                    <LeftSide>
-                      <strong>Umutangabuhamya (2):</strong>
-                    </LeftSide>
-                    <RightSide>
-                      <p>{caseDetails.secondWitness}</p>
-                    </RightSide>
-                  </TwoSidedContainer>
-                  <TwoSidedContainer>
-                    <LeftSide>
-                      <strong>Numero y'umutangabuhamya (2):</strong>
-                    </LeftSide>
-                    <RightSide>
-                      <p>{caseDetails.SWPhoneNumber}</p>
-                    </RightSide>
-                  </TwoSidedContainer>
-                  <TwoSidedContainer>
-                    <LeftSide>
-                      <strong>Aho icyaha cyabereye:</strong>
-                    </LeftSide>
-                    <RightSide>
-                      <p>{caseDetails.locationOfCrime}</p>
-                    </RightSide>
-                  </TwoSidedContainer>
-                  <TwoSidedContainer>
-                    <LeftSide>
-                      <strong>Ubusobanuro:</strong>
-                    </LeftSide>
-                    <RightSide>
-                      <p>{caseDetails.discription}</p>
-                    </RightSide>
-                  </TwoSidedContainer>
-                </>
-              }
-            </RightSide>
-          </TwoSidedContainer>
-          <hr />
-          <SectionCategory>Gusaba guhindura amakuru</SectionCategory>
-          {caseDetails.comment ? <></> : 
-            <form onSubmit={submitComment}>
-              <TwoSidedContainer>
-                <TextArea 
-                  type={'text'} 
-                  name='comment' 
-                  cols="10"
-                  rows="5"
-                  onChange={handleComment} 
-                  value={comment}
-                  placeholder='Icyo ushaka guhindura ...'  
-                ></TextArea>
-              </TwoSidedContainer>
-              <Button type='submit' color='primary' size='small' variant='contained'>{progress ? progress : "Ohereza"}</Button>
-            </form>
-          }
-          {caseDetails.comment 
-            ?
-            <TwoSidedContainer>
-              <LeftSide>
-                <strong>Impinduka zasabwe:</strong>
-              </LeftSide>
-              <RightSide>
-                <p>{caseDetails.comment}</p>
-              </RightSide>
-            </TwoSidedContainer>
-            :
-            <></>  
-          }
+          
+          
+          
+      
+          <Button  variant="contained" 
+            onClick={()=> {
+              localStorage.setItem('filter', caseDetails._id)
+              navigate('/dashboard/Cases')  
+            }
+            }>
+              Amakuru y'ikirego</Button>
+          
+              
+          
         </Box>
-      </Modal>
+          </Modal>
       <Message message={message.text} colorType={message.color} setOpenSnackbar={setOpenSnackbar} openSnackbar={openSnackbar} />
-    </>  
-  );
+    
+  </>  
+    );
 }
+
 
 const TableAction = ({params, handleOpen, caseId, setCaseId, showCaseData}) => {
   return (
@@ -473,4 +340,5 @@ const TableAction = ({params, handleOpen, caseId, setCaseId, showCaseData}) => {
     </>
   )
 }
+  
 
