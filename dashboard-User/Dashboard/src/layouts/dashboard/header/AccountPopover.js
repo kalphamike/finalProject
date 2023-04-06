@@ -4,6 +4,8 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 // mocks_
 import account from '../../../_mock/account';
+import { AiFillSetting } from 'react-icons/ai';
+import { FaSignOutAlt } from 'react-icons/fa';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +41,9 @@ export default function AccountPopover() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userPhone');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('id');
     window.location = '/auth/signin';
   }
 
@@ -64,18 +69,10 @@ export default function AccountPopover() {
         <Avatar src={account.photoURL} alt="photoURL" />
       </IconButton>
 
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleClose}
+      <Popover open={Boolean(open)} anchorEl={open} onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 0,
-            mt: 1.5,
-            ml: 0.75,
-            width: 180,
+        PaperProps={{ sx: { p: 0, mt: 1.5, ml: 0.75, width: 180,
             '& .MuiMenuItem-root': {
               typography: 'body2',
               borderRadius: 0.75,
@@ -92,21 +89,19 @@ export default function AccountPopover() {
           </Typography>
         </Box>
 
-        {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
-
-        <Stack sx={{ p: 1 }}>
+        {/* <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
             <MenuItem key={option.label} onClick={handleClose}>
               {option.label}
             </MenuItem>
           ))}
-        </Stack>
+        </Stack> */}
 
-        {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
+        <MenuItem 
+          // onClick={} 
+          sx={{ m: 1 }}><AiFillSetting />&nbsp;&nbsp; Settings</MenuItem>
 
-        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-          Logout
-        </MenuItem>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}><FaSignOutAlt />&nbsp;&nbsp; Logout</MenuItem>
       </Popover>
     </>
   );

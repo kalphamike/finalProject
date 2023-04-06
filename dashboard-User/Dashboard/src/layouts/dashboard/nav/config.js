@@ -3,34 +3,56 @@ import SvgColor from '../../../components/svg-color';
 
 // ----------------------------------------------------------------------
 
-const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+const icon = (name,color = '#f9fafb') => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} style={{backgroundColor: '#f9fafb'}}/>;
+
+
+
+
 
 const navConfig = [
   {
-    title: 'dashboard',
+    title: 'Isesengura',
     path: '/dashboard/app',
     icon: icon('ic_analytics'),
+    
   },
   // {
   //   title: 'user',
   //   path: '/dashboard/user',
   //   icon: icon('ic_user'),
   // },
+ 
   {
-    title: 'All Cases',
+    title: 'Andika ikibazo gishya ',
+    path: '/dashboard/NewCase',
+    icon: icon('add-case'),
+   },
+  //  {
+  //   title: 'Abana bugarijwe ',
+  //   path: '/dashboard/404',
+  //   icon: icon('ic_disabled'),
+  //  },
+    {
+    title: 'Ibirego bya twanzwe',
     path: '/dashboard/cases',
-    icon: icon('ic_disabled'),
+    icon: icon('list-cases'),
   },
-  // {
-  //   title: 'RecordCase',
-  //   path: '/dashboard/RecordCase',
-  //   icon: icon('ic_plus'),
-  // },
-  // {
-  //   title: 'login',
-  //   path: '/login',
-  //   icon: icon('ic_lock'),
-  // },
+   {
+     title: "lisite y'abana ",
+     path: '/dashboard/Victims',
+     icon: icon('victimes'),
+   },
+   
+  {
+    title: "lisite y'abaregwa",
+    path: '/dashboard/Suspect',
+    icon: icon('suspects'),
+  },
+  {
+    title: 'Mu muryango',
+    path: '/dashboard/Mumuryango',
+    icon: icon('family'),
+  }
   // {
   //   title: 'Not found',
   //   path: '/404',

@@ -48,7 +48,7 @@ export default function AuthenticationPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Admin </title>
+        <title> Login | Supervisor</title>
       </Helmet>
 
       <StyledRoot>
@@ -63,7 +63,7 @@ export default function AuthenticationPage() {
         {mdUp && (
           <StyledSection>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back Admin
+              Hi, Welcome Back Supervisor
             </Typography>
             <img src="/assets/illustrations/illustration_login.png" alt="login" />
           </StyledSection>
@@ -71,10 +71,7 @@ export default function AuthenticationPage() {
 
         <Container maxWidth="sm">
           <StyledContent>
-            
-
             <Outlet />
-            
           </StyledContent>
         </Container>
       </StyledRoot>

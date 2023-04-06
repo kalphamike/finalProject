@@ -10,6 +10,9 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import CasesPage from './pages/CasesPage';
+import Victims from './pages/Victims';
+import Suspect from './pages/Suspect';
+import Mumuyango from './pages/Mumuyango';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +32,9 @@ export default function Router() {
         { path: 'Reg', element: <ProductsPage /> },
         { path: 'cases', element: <CasesPage /> },
         { path: 'RecordCase', element: <BlogPage /> },
+        { path: 'Victims', element: <Victims /> },
+        { path: 'Suspect', element: <Suspect /> },
+        { path: 'Mumuryango', element: <Mumuyango /> },
       ],
     },
     {

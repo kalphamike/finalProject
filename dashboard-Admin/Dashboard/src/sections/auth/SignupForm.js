@@ -19,7 +19,7 @@ export default function SignUpForm() {
     name: '',
     phone: '',
     email: '',  
-    role: '',
+    role: 'Admin',
     province: '',
     district: '',
     sector:'',
@@ -103,7 +103,7 @@ export default function SignUpForm() {
           <TextField name="phone" value={signinData.phone} onChange={updateData} label="Phone" />
           <TextField name="email" value={signinData.email} onChange={updateData} label="Email address" />
           {/* Role */}
-          <NativeSelect 
+          {/* <NativeSelect 
             name='role'
             onChange={updateData}
             sx={{padding:2}}
@@ -112,7 +112,7 @@ export default function SignUpForm() {
               <option value='Admin'>Admin</option>
               <option value='Supervisor'>Supervisor</option>
               <option value='Agent'>Agent</option>
-          </NativeSelect>
+          </NativeSelect> */}
           {/* Province */}
           <NativeSelect 
             name='province'

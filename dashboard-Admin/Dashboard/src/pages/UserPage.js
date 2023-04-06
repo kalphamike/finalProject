@@ -1,295 +1,389 @@
+import React, { useState , useEffect} from 'react';
+import { GrView } from 'react-icons/gr';
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
-// @mui
-import {
-  Card,
-  Table,
-  Stack,
-  Paper,
-  Avatar,
-  Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
-  Container,
-  Typography,
-  IconButton,
-  TableContainer,
-  TablePagination,
-} from '@mui/material';
-// components
-import Label from '../components/label';
-import Iconify from '../components/iconify';
-import Scrollbar from '../components/scrollbar';
-// sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
-import USERLIST from '../_mock/user';
+import { Container, Stack,Typography,Button, Switch, TextField, NativeSelect } from '@mui/material';
+import Modal from '@mui/material/Modal';
+import { LeftSide, RightSide, SectionCategory, TextArea, TwoSidedContainer } from 'src/components/mycomp/CaseDetailsComponents';
+import Message from 'src/components/mycomp/Message';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-// ----------------------------------------------------------------------
+const style = {
+  position: 'absolute',
+  top: '0',
+  right: '0',
+  height: '100%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 8,
+  overflowY: 'scroll',
+  display: 'flex',
+};
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Location', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
-];
-
-// ----------------------------------------------------------------------
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
+const stylesTwo = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '100%',
+  flexDirection: 'column',
+  margin: '0 auto',
 }
 
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
+export default function CasesPage() {
+  
+  const navigate=useNavigate();
+  const [cases, setCases] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [caseDetails, setCaseDetails] = useState({});
+  const [caseId, setCaseId] = useState('');
+  const [progress, setProgress] = useState('');
+  const [progress2, setProgress2] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [message, setMessage] = useState({ text:'', color:''});
+  const [comment, setComment] = useState('');
+  const [checked, setChecked] = useState(true);
+  const [updatable, setUpdatable] = useState(true);
 
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleComment = ({ currentTarget: input }) => { setComment(input.value) };
+  const updateCase = ({ currentTarget: input }) => { setCaseDetails({ ...caseDetails, [input.name] : input.value }) };
+  
+  // Fetch user list
+  useEffect(()=>{
+    const filterValue = localStorage.getItem('filter');
+    axios.get('http://localhost:5000/api/user/list')
+    .then(response=> {
+      var filteredCases = [];
+      response.data.forEach(element => {
+        element.id=element._id;
+        filteredCases.push(element);
+      });
+      setCases(filteredCases);
+    })
+    .catch(error => { console.log(error);})
+  },[]);
+
+  // Fetch user data
+  const showCaseData = async (id) => {
+    console.log("Case id: "+id);
+    await axios.get(`http://localhost:5000/api/user/findByID?id=${id}`)
+    .then(response =>{
+      setCaseDetails(response.data);
+      handleOpen()
+      setChecked(response.data.status === 'active' ? true : false);
+    })
+    .catch(error => console.log(error))
   }
-  return stabilizedThis.map((el) => el[0]);
-}
-
-export default function UserPage() {
-  const [open, setOpen] = useState(null);
-
-  const [page, setPage] = useState(0);
-
-  const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+  
+  // Update user data
+  const updateUser = (e) => {
+    e.preventDefault();
+    
+    if (caseDetails.name === '' || caseDetails.nid === '' || caseDetails.phone === '' || caseDetails.email === '' || caseDetails.role === '' || caseDetails.status === '' ) {
+      setMessage({text:'Nta makuru mashya watanze. Funga dosiye.', color: 'error'})
+      setOpenSnackbar(true);
+    } else {
+      setProgress('Kohereza ...');
+      setTimeout(()=>{
+        axios.put(`http://localhost:5000/api/user/update?id=${caseDetails._id}`, caseDetails)
+        .then(response => {
+            if (response.status === 201) {
+              setMessage({text: 'Impinuka zakozwe ' ,color: 'success'})
+              setOpenSnackbar(true);
+              setProgress('');
+            }
+        })
+        .catch(error=> { if (error.response && error.response.status >= 400 && error.response.status <= 500) { setError(error) } });
+      },3000)
     }
-    setSelected([]);
-  };
+  }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+  // Update user status
+  const changeStatus = (userId) => {
+    console.log(userId);
+    if (caseDetails.status === 'banned') {
+      caseDetails.status = 'active';
+      setChecked(true);
+    } else if (caseDetails.status === 'active') {
+      caseDetails.status = 'banned';
+      setChecked(false);
     }
-    setSelected(newSelected);
-  };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+    axios.put(`http://localhost:5000/api/user/update?id=${userId}`, caseDetails)
+    .then(response=> {
+      setTimeout(()=>{
+        console.log(response.message)
+      },3000)    
+    })
+    .catch(error => console.log(error))
+  }
 
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
+  // Delete user account
+  const deleteAccount = (userId) => {
+    setProgress2('Gusiba ...');
+    setTimeout(()=>{
+      axios.delete(`http://localhost:5000/api/user/delete?id=${userId}`)
+      .then(response => {
+        if (response.status === 201) {
+          console.log(`http://localhost:5000/api/user/delete?id=${userId}`);
+          setMessage({text: response.data.message ,color: 'success'})
+          setOpenSnackbar(true);
+          setProgress2('');
+          setTimeout(() => { window.location.reload() }, 3000);
+        }
+      })
+      .catch(error=> { 
+        if (error.response && error.response.status >= 400 && error.response.status <= 500) { 
+          setError(error);
+          setMessage({text: response.data.message ,color: 'success'});
+          setOpenSnackbar(true);  
+        } 
+      });
+    },3000);
+  }
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
+  const columns = [
+    { 
+      field: 'name', 
+      headerName: 'Amazina', 
+      width: 250 
+    },
+    {
+      field: 'email',
+      headerName: "Imeri",
+      width: 250,
+      editable: true,
+    },
+    {
+      field: 'status',
+      headerName: 'Imiterere',
+      width: 230,
+      editable: true,
+    },  
+    {
+      field: 'role',
+      headerName: 'Uruhare',
+      width: 200,
+      editable: true,
+    },
+    {
+      field: 'actions',
+      headerName: '',
+      width: 50,
+      renderCell: (params) => ( 
+        <TableAction params={params} handleOpen={handleOpen} caseId={caseId} setCaseId={setCaseId} showCaseData={showCaseData}/>
+      ),
+    },
+  ];
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
-  const isNotFound = !filteredUsers.length && !!filterName;
+  const rows = cases
 
   return (
     <>
-      <Helmet>
-        <title> User  </title>
-      </Helmet>
-
+      <Helmet><title>Lisite y'inshuti z'umuryango.</title></Helmet>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Users
-          </Typography>
-          <Button  variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="http://localhost:3003/auth/signup">
-          New User
-          </Button>
-          
+          <Typography variant="h4" gutterBottom>Lisite y'inshuti z'umuryango. Ku rwego rw'umudugudu.</Typography>
+          <div>
+            {localStorage.getItem('filter') !== '' && 
+              <Button  variant="outlined" 
+                sx={{ marginRight: '10px', boxShadow: '0 4px 8px 0 #d1e9fc'}}
+                onClick={()=> {
+                  localStorage.setItem('filter', '');
+                  window.location.reload();
+                  }
+                }>Ibibazo Byose</Button>
+            }
+          </div>
         </Stack>
+      </Container> 
+      <Box sx={{ height: 800, width: '100%' }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[10]}
+          checkboxSelection 
+          disableSelectionOnClick
+          experimentalFeatures={{ newEditingApi: true }}
+        />
+      </Box>
 
-        <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
-
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            '& .MuiMenuItem-root': {
-              px: 1,
-              typography: 'body2',
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
-    </>
+      {/* User details popup */}
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box sx={style}>
+          <form style={stylesTwo}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+              <Button variant='contained' size='small' color='primary' onClick={() => setUpdatable(!updatable)}>
+                { !updatable ? 'Hindura' : 'Subira inyuma' }
+              </Button>
+              {!updatable && <Button variant='contained' size='small' color='error' 
+                onClick={(e) => {
+                  e.preventDefault();
+                  deleteAccount(caseDetails._id);
+                }
+              }>{ progress2 !== '' ? progress2 : 'Siba' }</Button>}
+            </div>
+            <hr />
+            {updatable ?  
+              <UpdateForm onSubmit={updateUser}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <TwoSidedContainer>
+                      <LeftSide>
+                        <strong>Amazina:</strong>
+                      </LeftSide>
+                      <RightSide>
+                        <TextField type={'text'} size='small' name='name' value={caseDetails.name || ''} onChange={updateCase} />
+                      </RightSide>
+                    </TwoSidedContainer>
+                    <TwoSidedContainer>
+                      <LeftSide>
+                        <strong>Indangamuntu:</strong>
+                      </LeftSide>
+                      <RightSide>
+                        <TextField type={'text'} size='small' name='nid' value={caseDetails.nid || ''} onChange={updateCase} />
+                      </RightSide>
+                    </TwoSidedContainer>
+                    <TwoSidedContainer>
+                      <LeftSide>
+                        <strong>Terefoni:</strong>
+                      </LeftSide>
+                      <RightSide>
+                        <TextField type={'text'} size='small' name='phone' value={caseDetails.phone || ''} onChange={updateCase} />
+                      </RightSide>
+                    </TwoSidedContainer>
+                    <TwoSidedContainer>
+                      <LeftSide>
+                        <strong>Imeri:</strong>
+                      </LeftSide>
+                      <RightSide>
+                        <TextField type={'email'} size='small' name='email' value={caseDetails.email || ''} onChange={updateCase} />
+                      </RightSide>
+                    </TwoSidedContainer>
+                    <TwoSidedContainer>
+                      <LeftSide>
+                        <strong>Uruhare:</strong>
+                      </LeftSide>
+                      <RightSide>
+                        <NativeSelect variant='outlined' size='small' name='role' onChange={updateCase} sx={{padding:2}}>
+                          <option value={''}>Select Role</option>
+                          <option value={'Admin'}>Admin</option>
+                          <option value={'Agent'}>Agent</option>
+                          <option value={'Supervisor'}>Supervisor</option>
+                        </NativeSelect>
+                      </RightSide>
+                    </TwoSidedContainer>
+                    <TwoSidedContainer>
+                      <LeftSide>
+                        <strong>Imiterere ya konti:</strong>
+                      </LeftSide>
+                      <RightSide>
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                          <Switch checked={checked} inputProps={{ 'aria-label': 'controlled' }}
+                            onClick={(e)=> {
+                              e.preventDefault();
+                              changeStatus(caseDetails._id);                            
+                            }}  
+                          />
+                        </div>
+                      </RightSide>
+                    </TwoSidedContainer>
+                    <Button variant='contained' size='small' color='success' style={{ color: 'white' }} onClick={updateUser}>{ progress !== '' ? progress : 'Emeza' }</Button>
+                  </div>
+              </UpdateForm>
+            :
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Amazina:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <p>{caseDetails.name}</p>
+                    </RightSide>
+                  </TwoSidedContainer>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Indangamuntu:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <p>{caseDetails.nid}</p>
+                    </RightSide>
+                  </TwoSidedContainer>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Terefoni:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <p>{caseDetails.phone}</p>
+                    </RightSide>
+                  </TwoSidedContainer>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Emeri:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <p>{caseDetails.email}</p>
+                    </RightSide>
+                  </TwoSidedContainer>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Aho atuye:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <p>{caseDetails.province+", "+caseDetails.district+", "+caseDetails.sector+", "+caseDetails.cell}</p>
+                    </RightSide>
+                  </TwoSidedContainer>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Uruhare:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <p>{caseDetails.role}</p>
+                    </RightSide>
+                  </TwoSidedContainer>
+                  <TwoSidedContainer>
+                    <LeftSide>
+                      <strong>Imiterere ya konti:</strong>
+                    </LeftSide>
+                    <RightSide>
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        <p>{caseDetails.status}</p>
+                        <Switch 
+                          checked={checked}
+                          inputProps={{ 'aria-label': 'controlled' }}
+                          onClick={(e)=> {
+                            e.preventDefault();
+                            changeStatus(caseDetails._id)                            
+                          }}  
+                        />
+                      </div>
+                    </RightSide>
+                  </TwoSidedContainer>
+                </div>
+            }
+          </form>
+        </Box>
+      </Modal>
+      <Message message={message.text} colorType={message.color} setOpenSnackbar={setOpenSnackbar} openSnackbar={openSnackbar} />
+    </>  
   );
 }
+
+const TableAction = ({params, handleOpen, caseId, setCaseId, showCaseData}) => {
+  return (
+    <>
+      <button style={{ background: 'transparent', border: 'none', color:'#2065d1', cursor: 'pointer'}} onClick={()=>{ showCaseData(params.row.id) }}>
+          <GrView/>
+      </button>
+    </>
+  )
+}
+
+// Styled components
+const UpdateForm = styled.form`
+`;

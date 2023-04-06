@@ -30,12 +30,18 @@ exports.sectors = {
 
 exports.cells = {
     'Kacyiru': {
-        cells: ['Kamutwa', 'Amahoro', 'Kamatamu']
+        cells: ['Amahoro', 'Ubumwe', 'kabasengenezi']
     },
     'Jali': {
         cells: ['Kinunga', 'Kabizoza', 'Hihogwe']
     },
     'Gisozi': {
         cells: ['Kukumukenye', 'Ruhango', 'Budulira']
-    }
+    },
+    'Kimisagara': {
+        sectors: ['kove-ka', 'kove-ka', 'bukina']
+   
+    },'Gikondo': {
+        sectors: ['Sugira', 'umutako', 'kabacuzi']
+    },
 }
