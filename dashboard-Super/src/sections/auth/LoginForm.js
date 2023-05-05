@@ -1,19 +1,35 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Stack, IconButton, Typography, InputAdornment, TextField, Checkbox, Alert } from '@mui/material';
+import { Stack, IconButton, Typography, InputAdornment, TextField, Checkbox} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../../components/iconify';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState({ email: '', password: ''});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [notification, setNotification] = useState({ message:'', type:'' })
 
   const handleInputs = ({currentTarget: input}) => {
     setUser({...user, [input.name]: input.value})
@@ -67,7 +83,15 @@ export default function LoginForm() {
           }
         }
       })
-      .catch(error => setError(error))
+      .catch(error => 
+        
+        {
+          if(error.response && error.response.status >= 400 && error.response.status <= 500 ){
+            setNotification({ message: 'Invalid email or password', type: 'error'});
+            setOpen(true);
+          }
+          
+        })
     }
   };
 
@@ -96,17 +120,16 @@ export default function LoginForm() {
               </IconButton>
             </InputAdornment>
           ),}}/>
-          <Typography variant="body2" sx={{ mb: 5 }}>
-        Wibagiwe ijambo ry'ibanga,{''}
-        <Link to={
-        // /auth/signup
-        '#'}> Kanda hano</Link>
-      </Typography>
+          <Typography variant="body2" sx={{ mb: 5 }}>Wibagiwe ijambo ry'ibanga,{''}<Link to={'/auth/forgetPassword'}> Kanda hano</Link></Typography>
         </Stack>
         <LoadingButton fullWidth size="large" type="submit" variant="contained" sx={{marginTop: 5}}>
           Sign in
         </LoadingButton>
       </form>
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={notification.type} sx={{ width: '100%' }}>{notification.message}</Alert>
+      </Snackbar>
     </>
   );
 }

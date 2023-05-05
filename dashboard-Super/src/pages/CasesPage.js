@@ -187,7 +187,7 @@ export default function CasesPage() {
                   }
                 }>Ibibazo Byose</Button>}
             
-            <Button  variant="contained" onClick={()=> navigate('/dashboard/NewCase')}>Ikibazo Gishya</Button>
+            <Button  variant="contained" onClick={()=> navigate('/dashboard/NewCase')}>Imfashanyigisho shya</Button>
           </div>
         </Stack>
       </Container> 
@@ -250,6 +250,8 @@ export default function CasesPage() {
                   </LeftSide>
                   <RightSide>
                     <p>{caseDetails.disabilityDescription}</p>
+                   
+
                   </RightSide>
                 </TwoSidedContainer>
               }
@@ -258,7 +260,7 @@ export default function CasesPage() {
                   <strong>Icyiciro cy'amashuri:</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.educationLevel}</p>
+                <TextField name="hasDisability" size='small' value={caseDetails.educationLevel} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
             </RightSide>
@@ -272,7 +274,7 @@ export default function CasesPage() {
                   <strong>Umurera:</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.firstguiderOfVictime}</p>
+                <TextField name="hasDisability" size='small' value={caseDetails.firstguiderOfVictime} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
               <TwoSidedContainer>
@@ -280,7 +282,7 @@ export default function CasesPage() {
                   <strong>Aho umurera atuye:</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.firstguiderResidence}</p>
+                <TextField name="hasDisability" size='small' value={caseDetails.firstguiderResidence} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
               <TwoSidedContainer>
@@ -288,7 +290,7 @@ export default function CasesPage() {
                   <strong>Telefoni y'umurera:</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.firstguiderPhoneNumber}</p>
+                  <TextField name="hasDisability" size='small' value={caseDetails.firstguiderPhoneNumber} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
             </LeftSide>
@@ -298,7 +300,7 @@ export default function CasesPage() {
                   <strong>Umurera (2):</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.secondGuiderOfVictime}</p>
+                <TextField name="hasDisability" size='small' value={caseDetails.secondGuiderOfVictime} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
               <TwoSidedContainer>
@@ -306,7 +308,7 @@ export default function CasesPage() {
                   <strong>Aho umurera atuye (2):</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.secondGuiderResidence}</p>
+                <TextField name="hasDisability" size='small' value={caseDetails.secondGuiderResidence} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
               <TwoSidedContainer>
@@ -314,7 +316,7 @@ export default function CasesPage() {
                   <strong>Telefoni y'umurera (2):</strong>
                 </LeftSide>
                 <RightSide>
-                  <p>{caseDetails.secondGuiderPhoneNumber}</p>
+                <TextField name="hasDisability" size='small' value={caseDetails.secondGuiderPhoneNumber} onChange={handleInputs} label="Has disability" />
                 </RightSide>
               </TwoSidedContainer>
             </RightSide>
