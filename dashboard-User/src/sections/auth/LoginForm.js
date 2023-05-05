@@ -17,7 +17,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -30,8 +30,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState({email: '', password: ''});
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [notification, setNotification] = useState({ message:'', type:'' })
+  const [notification, setNotification] = useState({ message:'', type:'' });
 
   const handleInputs = ({currentTarget: input}) => {
     setUser({...user, [input.name]: input.value})
@@ -52,7 +51,7 @@ export default function LoginForm() {
       setError("");
       axios.post('http://localhost:5000/api/user/signin', user)
       .then(response => {
-        if(response.data.status === 401) {
+        if(response.data.status === 200) {
           setNotification({ message: response.data , type: 'error'});
           setOpen(true);
           console.log(response.data);
@@ -82,27 +81,23 @@ export default function LoginForm() {
             localStorage.setItem('supervisorName', response.data.user.name);
             localStorage.setItem('userRole', response.data.user.role);
             localStorage.setItem('id', response.data.user._id);
-          }s
-          // setNotification({ message: 'Log', type: 'success'})  
+          }  
         }
       })
       .catch(error => {
-        setNotification({ message: error, type: 'error'});
-        setOpen(true);
-        console.log(error);
+        if(error.response && error.response.status >= 400 && error.response.status <= 500 ){
+          setNotification({ message: 'Invalid email or password', type: 'error'});
+          setOpen(true);
+        }
       })
     }
   };
 
   return (
-    <>
+    <> 
       <Typography variant="h4" gutterBottom>
         Injira kuri Child Rights System
       </Typography>
-      {/* <Typography variant="body2" sx={{ mb: 5 }}>
-        Don’t have an account? {''}
-        <Link to={'/auth/signup'}>Get Started</Link>
-      </Typography> */}
       <Typography>
         {error &&
           <Alert severity="error">{error}</Alert>
@@ -120,18 +115,15 @@ export default function LoginForm() {
               </IconButton>
             </InputAdornment>
           ),}}/>
-          <Typography variant="body2" sx={{ mb: 5 }}>
-        Wibagiwe ijambo ry'ibanga,{''}
-        <Link to={
-        // /auth/signup
-        '#'}> Kanda hano</Link>
-      </Typography>
+          <Typography variant="body2" sx={{ mb: 5 }}>Wibagiwe ijambo ry'ibanga,{''}
+            <Link to={'/auth/forgetPassword'}> Kanda hano</Link>
+          </Typography>
         </Stack>
         <LoadingButton fullWidth size="large" type="submit" variant="contained" sx={{marginTop: 5}}>
           Emeza
-        </LoadingButton>
-        
+        </LoadingButton>        
       </form>
+
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={notification.type} sx={{ width: '100%' }}>{notification.message}</Alert>
       </Snackbar>
