@@ -208,7 +208,7 @@ export default function NewCase() {
                     </Select>
                   </FormControl>
                   <FormControl size="small" fullWidth>
-                    <InputLabel id="choose-district">Akarera</InputLabel>
+                    <InputLabel id="choose-district">Akarere</InputLabel>
                     <Select 
                       name="district" 
                       id="district" 
